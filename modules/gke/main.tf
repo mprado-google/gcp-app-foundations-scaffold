@@ -84,16 +84,18 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 
   node_config {
-    machine_type = var.primary_node_machine_type
-    disk_size_gb = 100
-    disk_type    = "pd-standard"
-
-    # SA Dedicada (Menor Privilégio - Proibido Compute Default SA)
-    service_account = var.service_account_email
-    oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
-
-    labels = var.common_labels
-
+    machine_type    = "e2-medium"
+    disk_size_gb    = 100
+    disk_type       = "pd-balanced"
+    service_account = "default"
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/service.management.readonly",
+      "https://www.googleapis.com/auth/servicecontrol",
+      "https://www.googleapis.com/auth/trace.append",
+    ]
     shielded_instance_config {
       enable_secure_boot          = false
       enable_integrity_monitoring = true
@@ -105,39 +107,3 @@ resource "google_container_node_pool" "primary_nodes" {
     auto_upgrade = true
   }
 }
-
-# 3. Node Pools Adicionais Configuráveis (ex: workers dedicados / GPU)
-resource "google_container_node_pool" "custom_node_pools" {
-  for_each   = { for pool in var.node_pools : pool.name => pool }
-  name       = "${local.cluster_name}-${each.value.name}-pool"
-  project    = var.project_id
-  location   = local.location
-  cluster    = google_container_cluster.primary.name
-  node_count = each.value.min_node_count
-
-  autoscaling {
-    min_node_count = each.value.min_node_count
-    max_node_count = each.value.max_node_count
-  }
-
-  node_config {
-    machine_type    = each.value.machine_type
-    disk_size_gb    = each.value.disk_size_gb
-    disk_type       = each.value.disk_type
-    service_account = var.service_account_email
-    oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
-
-    labels = merge(var.common_labels, each.value.labels)
-
-    shielded_instance_config {
-      enable_secure_boot          = false
-      enable_integrity_monitoring = true
-    }
-  }
-
-  management {
-    auto_repair  = coalesce(each.value.auto_repair, true)
-    auto_upgrade = coalesce(each.value.auto_upgrade, true)
-  }
-}
-
