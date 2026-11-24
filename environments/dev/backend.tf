@@ -12,7 +12,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "seia-adapar-dev-tfstate-southamericaeast1"
+    bucket = "seia-adapar-dev-lab-4408-tfstate"
     prefix = "terraform/state/dev"
   }
 }

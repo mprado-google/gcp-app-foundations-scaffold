@@ -1,4 +1,4 @@
-project_id       = "seia-adapar-dev"
+project_id = "seia-adapar-dev-lab-4408"
 environment      = "dev"
 company_prefix   = "seia"
 project_name     = "adapar"
