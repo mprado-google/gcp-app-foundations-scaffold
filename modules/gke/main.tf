@@ -72,7 +72,7 @@ resource "google_container_cluster" "primary" {
 
 # 2. Node Pool Principal
 resource "google_container_node_pool" "primary_nodes" {
-  name       = "${local.cluster_name}-primary-pool"
+  name       = "${local.cluster_name}-pool"
   project    = var.project_id
   location   = local.location
   cluster    = google_container_cluster.primary.name
