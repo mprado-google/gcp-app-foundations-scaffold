@@ -38,7 +38,7 @@ resource "google_compute_instance_template" "gpu_worker_template" {
     source_image = "cos-cloud/cos-stable"
     auto_delete  = true
     boot         = true
-    disk_size_gb = 100
+    disk_size_gb = 150
     disk_type    = "pd-ssd"
 
     dynamic "disk_encryption_key" {
@@ -107,7 +107,7 @@ resource "google_workbench_instance" "workbench" {
     }
 
     boot_disk {
-      disk_size_gb = 100
+      disk_size_gb = 150
       disk_type    = "PD_SSD"
     }
   }

@@ -21,6 +21,13 @@ resource "google_container_cluster" "primary" {
   location                 = local.location
   remove_default_node_pool = true
   initial_node_count       = 1
+
+  node_config {
+    shielded_instance_config {
+      enable_secure_boot          = true
+      enable_integrity_monitoring = true
+    }
+  }
   network                  = var.network_id
   subnetwork               = var.subnet_id
 
