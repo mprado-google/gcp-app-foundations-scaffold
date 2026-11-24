@@ -18,7 +18,6 @@ locals {
 
   # Flags essenciais para GIS, telemetria e conformidade com PostgreSQL
   default_flags = [
-    { name = "shared_preload_libraries", value = "pg_stat_statements" },
     { name = "log_checkpoints", value = "on" },
     { name = "log_connections", value = "on" },
     { name = "log_disconnections", value = "on" },
