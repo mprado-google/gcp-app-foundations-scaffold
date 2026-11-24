@@ -78,9 +78,8 @@ resource "google_container_node_pool" "primary_nodes" {
   cluster    = google_container_cluster.primary.name
   node_count = var.primary_min_nodes
 
-  autoscaling {
-    min_node_count = var.primary_min_nodes
-    max_node_count = var.primary_max_nodes
+  lifecycle {
+    ignore_changes = [node_count, autoscaling, node_config]
   }
 
   node_config {
