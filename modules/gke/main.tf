@@ -16,6 +16,7 @@ locals {
 
 # 1. Cluster GKE Privado
 resource "google_container_cluster" "primary" {
+  deletion_protection = false
   name                     = local.cluster_name
   project                  = var.project_id
   location                 = local.location
@@ -24,7 +25,7 @@ resource "google_container_cluster" "primary" {
 
   node_config {
     shielded_instance_config {
-      enable_secure_boot          = true
+      enable_secure_boot          = false
       enable_integrity_monitoring = true
     }
   }
@@ -94,7 +95,7 @@ resource "google_container_node_pool" "primary_nodes" {
     labels = var.common_labels
 
     shielded_instance_config {
-      enable_secure_boot          = true
+      enable_secure_boot          = false
       enable_integrity_monitoring = true
     }
   }
@@ -129,7 +130,7 @@ resource "google_container_node_pool" "custom_node_pools" {
     labels = merge(var.common_labels, each.value.labels)
 
     shielded_instance_config {
-      enable_secure_boot          = true
+      enable_secure_boot          = false
       enable_integrity_monitoring = true
     }
   }
