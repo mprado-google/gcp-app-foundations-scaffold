@@ -44,6 +44,10 @@ locals {
 }
 
 resource "google_cloud_run_v2_service" "services" {
+  lifecycle {
+    ignore_changes = [scaling]
+  }
+
   for_each    = local.services
   project     = var.project_id
   name        = each.value.name
