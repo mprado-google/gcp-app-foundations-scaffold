@@ -342,3 +342,78 @@ variable "looker_platform_edition" {
   type        = string
   default     = "LOOKER_CORE_STANDARD"
 }
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Feature Flags — Load Balancer e Vertex AI (módulos #15 e #16)
+# ─────────────────────────────────────────────────────────────────────────────
+variable "enable_load_balancer" {
+  description = "Feature flag para ativação do módulo load-balancer (Global HTTPS LB + Cloud CDN)."
+  type        = bool
+  default     = true
+}
+
+variable "enable_vertex_ai" {
+  description = "Feature flag para ativação do módulo vertex-ai (Dataset, Tensorboard, Workbench, bucket A100)."
+  type        = bool
+  default     = true
+}
+
+# --- Configurações do Load Balancer ---
+variable "lb_domains" {
+  description = "Lista de domínios para o certificado SSL gerenciado do Load Balancer (ex: ['app.seia.adapar.gov.br'])."
+  type        = list(string)
+  default     = []
+}
+
+variable "lb_enable_cdn" {
+  description = "Habilita Cloud CDN no backend service do Load Balancer para caching de assets e tiles."
+  type        = bool
+  default     = true
+}
+
+variable "lb_health_check_path" {
+  description = "Path para o health check HTTPS dos backends do Load Balancer."
+  type        = string
+  default     = "/healthz"
+}
+
+variable "lb_backends" {
+  description = "Lista de backends (NEGs de Cloud Run, GKE Serverless NEG) a serem associados ao Load Balancer."
+  type = list(object({
+    group           = string
+    balancing_mode  = optional(string, "UTILIZATION")
+    capacity_scaler = optional(number, 1.0)
+  }))
+  default = []
+}
+
+# --- Configurações do Vertex AI ---
+variable "enable_workbench_vertex" {
+  description = "Habilita Vertex AI Workbench no módulo vertex-ai (exclusivo para dev conforme spec.md)."
+  type        = bool
+  default     = true
+}
+
+variable "vertex_workbench_machine_type" {
+  description = "Tipo de máquina da instância Vertex AI Workbench no módulo vertex-ai."
+  type        = string
+  default     = "e2-standard-4"
+}
+
+variable "vertex_force_destroy" {
+  description = "Permite destruir o bucket de artefatos Vertex AI com conteúdo em dev."
+  type        = bool
+  default     = true
+}
+
+variable "vertex_artifact_nearline_days" {
+  description = "Dias para mover artefatos de treinamento Vertex AI para Nearline."
+  type        = number
+  default     = 90
+}
+
+variable "vertex_artifact_retention_days" {
+  description = "Dias de retenção total dos artefatos Vertex AI antes de expirar."
+  type        = number
+  default     = 365
+}

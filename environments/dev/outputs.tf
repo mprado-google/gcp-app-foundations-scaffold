@@ -166,3 +166,50 @@ output "workbench_instance_id" {
   description = "ID da instância do Vertex AI Workbench (disponível em dev)."
   value       = var.enable_compute_vm && var.enable_networking && var.enable_security_iam ? module.compute_vm[0].workbench_instance_id : null
 }
+
+# Outputs do módulo load-balancer
+output "lb_ip_address" {
+  description = "IP público estático do Global HTTPS Load Balancer."
+  value       = var.enable_load_balancer && var.enable_networking ? module.load_balancer[0].lb_ip_address : null
+}
+
+output "lb_ip_name" {
+  description = "Nome do recurso de IP estático global do Load Balancer."
+  value       = var.enable_load_balancer && var.enable_networking ? module.load_balancer[0].lb_ip_name : null
+}
+
+output "lb_backend_service_id" {
+  description = "ID do Backend Service do Load Balancer (com Cloud Armor e Cloud CDN associados)."
+  value       = var.enable_load_balancer && var.enable_networking ? module.load_balancer[0].backend_service_id : null
+}
+
+output "lb_https_forwarding_rule_name" {
+  description = "Nome da Global Forwarding Rule HTTPS do Load Balancer."
+  value       = var.enable_load_balancer && var.enable_networking ? module.load_balancer[0].https_forwarding_rule_name : null
+}
+
+# Outputs do módulo vertex-ai
+output "vertex_artifacts_bucket_name" {
+  description = "Nome do bucket GCS de artefatos de treinamento Vertex AI (us-central1)."
+  value       = var.enable_vertex_ai && var.enable_networking && var.enable_security_iam ? module.vertex_ai[0].vertex_artifacts_bucket_name : null
+}
+
+output "vertex_dataset_id" {
+  description = "ID do Vertex AI Dataset de imagens aéreas para treinamento."
+  value       = var.enable_vertex_ai && var.enable_networking && var.enable_security_iam ? module.vertex_ai[0].vertex_dataset_id : null
+}
+
+output "vertex_tensorboard_id" {
+  description = "ID do Vertex AI Tensorboard para rastreamento de experimentos."
+  value       = var.enable_vertex_ai && var.enable_networking && var.enable_security_iam ? module.vertex_ai[0].tensorboard_id : null
+}
+
+output "vertex_workbench_instance_id" {
+  description = "ID da instância Vertex AI Workbench do módulo vertex-ai (dev-only)."
+  value       = var.enable_vertex_ai && var.enable_networking && var.enable_security_iam ? module.vertex_ai[0].workbench_instance_id : null
+}
+
+output "vertex_workbench_proxy_uri" {
+  description = "URI de acesso ao Vertex AI Workbench via proxy gerenciado."
+  value       = var.enable_vertex_ai && var.enable_networking && var.enable_security_iam ? module.vertex_ai[0].workbench_proxy_uri : null
+}

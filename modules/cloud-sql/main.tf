@@ -39,8 +39,8 @@ resource "google_sql_database_instance" "postgres" {
   encryption_key_name = var.kms_key_name
 
   settings {
-    tier = var.tier
-    edition = "ENTERPRISE"
+    tier              = var.tier
+    edition           = "ENTERPRISE"
     availability_type = var.availability_type
     disk_type         = var.disk_type
     disk_size         = var.disk_size_gb

@@ -16,7 +16,7 @@ locals {
 
 # 1. Cluster GKE Privado
 resource "google_container_cluster" "primary" {
-  deletion_protection = false
+  deletion_protection      = false
   name                     = local.cluster_name
   project                  = var.project_id
   location                 = local.location
@@ -29,8 +29,8 @@ resource "google_container_cluster" "primary" {
       enable_integrity_monitoring = true
     }
   }
-  network                  = var.network_id
-  subnetwork               = var.subnet_id
+  network    = var.network_id
+  subnetwork = var.subnet_id
 
   # Configuração de IPs secundários para Pods e Services
   ip_allocation_policy {

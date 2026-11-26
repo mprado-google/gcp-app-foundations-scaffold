@@ -1,4 +1,4 @@
-project_id = "seia-adapar-dev-lab-4408"
+project_id       = "seia-adapar-dev-lab-4408"
 environment      = "dev"
 company_prefix   = "seia"
 project_name     = "adapar"
@@ -95,3 +95,21 @@ compute_gpu_count      = 1
 compute_target_size    = 0
 enable_workbench       = true
 workbench_machine_type = "e2-standard-4"
+
+# --- Feature Flags: Load Balancer e Vertex AI ---
+enable_load_balancer = true
+enable_vertex_ai     = true
+
+# --- Configurações do Load Balancer (dev: sem domínios SSL, backends provisórios) ---
+# Adicione os domínios reais antes de executar em produção
+lb_domains           = []
+lb_enable_cdn        = true
+lb_health_check_path = "/healthz"
+lb_backends          = []
+
+# --- Configurações do Vertex AI (dev: Workbench habilitado, sizing mínimo) ---
+enable_workbench_vertex        = true
+vertex_workbench_machine_type  = "e2-standard-4"
+vertex_force_destroy           = true
+vertex_artifact_nearline_days  = 90
+vertex_artifact_retention_days = 365

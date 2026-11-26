@@ -296,3 +296,58 @@ module "looker_core" {
     module.networking
   ]
 }
+
+# 15. Global HTTPS Load Balancer (com Cloud CDN e integração Cloud Armor)
+module "load_balancer" {
+  count  = var.enable_load_balancer && var.enable_networking ? 1 : 0
+  source = "../../modules/load-balancer"
+
+  project_id            = var.project_id
+  environment           = var.environment
+  company_prefix        = var.company_prefix
+  project_name          = var.project_name
+  region                = var.region
+  common_labels         = var.common_labels
+  enable_load_balancer  = var.enable_load_balancer
+  domains               = var.lb_domains
+  cloud_armor_policy_id = var.enable_cloud_armor ? module.networking[0].cloud_armor_policy_id : null
+  enable_cdn            = var.lb_enable_cdn
+  health_check_path     = var.lb_health_check_path
+  backends              = var.lb_backends
+
+  depends_on = [
+    module.project_services,
+    module.networking
+  ]
+}
+
+# 16. Vertex AI (Dataset, Tensorboard, bucket us-central1 + Workbench exclusivo dev)
+module "vertex_ai" {
+  count  = var.enable_vertex_ai && var.enable_networking && var.enable_security_iam ? 1 : 0
+  source = "../../modules/vertex-ai"
+
+  project_id              = var.project_id
+  environment             = var.environment
+  company_prefix          = var.company_prefix
+  project_name            = var.project_name
+  region                  = var.region
+  training_region         = var.secondary_region
+  common_labels           = var.common_labels
+  enable_vertex_ai        = var.enable_vertex_ai
+  enable_workbench        = var.enable_workbench_vertex
+  service_account_email   = module.security_iam[0].sa_emails["ingestion"]
+  network_id              = module.networking[0].network_id
+  subnet_id               = module.networking[0].subnets["app"].id
+  workbench_zone          = "${var.region}-a"
+  workbench_machine_type  = var.vertex_workbench_machine_type
+  kms_key_name            = var.enable_cmek && var.enable_security_iam ? module.security_iam[0].storage_crypto_key_id : null
+  force_destroy           = var.vertex_force_destroy
+  artifact_nearline_days  = var.vertex_artifact_nearline_days
+  artifact_retention_days = var.vertex_artifact_retention_days
+
+  depends_on = [
+    module.project_services,
+    module.networking,
+    module.security_iam
+  ]
+}

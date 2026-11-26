@@ -2,6 +2,17 @@
 
 Módulo responsável pela topologia de rede privada em conformidade com as diretrizes do `code_guidance.md` e `spec.md`. Garante que nenhum recurso interno possua IP público exposto, fornecendo conectividade de saída via Cloud NAT e acesso privado a serviços gerenciados (Cloud SQL, Memorystore) via Private Service Access (PSA).
 
+## ⚠️ Cloud Armor (WAF) — Localização no Projeto
+
+> **A política Cloud Armor (WAF) é criada neste módulo (`modules/networking`)**, como recurso `google_compute_security_policy.cloud_armor`, controlado pela flag `enable_cloud_armor = true`.
+>
+> Ela é **referenciada pelo módulo `modules/load-balancer`** via output `cloud_armor_policy_id`, e aplicada ao `google_compute_backend_service` do HTTPS LB para proteção de borda.
+>
+> **Regras WAF configuradas:**
+> - Rate limiting / ban por IP (proteção DoS — 100 req/min padrão)
+> - Bloqueio SQLi — `evaluatePreconfiguredExpr('sqli-v33-stable')` (OWASP)
+> - Bloqueio XSS — `evaluatePreconfiguredExpr('xss-v33-stable')` (OWASP)
+
 ## Recursos Gerenciados
 
 - `google_compute_network`: VPC dedicada (ou integração com Shared VPC).
@@ -9,7 +20,7 @@ Módulo responsável pela topologia de rede privada em conformidade com as diret
 - `google_compute_router` & `google_compute_router_nat`: Cloud NAT para saída segura à internet.
 - `google_compute_global_address` & `google_service_networking_connection`: Conexão privada PSA para peering de serviços gerenciados.
 - `google_compute_firewall`: Regras de menor privilégio (tráfego interno, health checks do Google, acesso via IAP).
-- `google_compute_security_policy`: WAF Cloud Armor com mitigação de DDoS/rate limiting e regras OWASP (SQLi, XSS).
+- `google_compute_security_policy`: **WAF Cloud Armor** com mitigação de DDoS/rate limiting e regras OWASP (SQLi, XSS) — `cloud_armor_policy_id` é passado ao módulo `load-balancer`.
 
 ## Inputs
 
